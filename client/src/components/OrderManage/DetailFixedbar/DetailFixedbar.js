@@ -42,6 +42,7 @@ const StateButton = styled.div`
 class DetailFixedbar extends Component {
   render() {
     const { imgTextView } = this.props;
+    const { state, orderNumber, name, phone, address ,date, model, rightSize, leftSize, last, sole, midsole, sockLining, heel, decoration, material, innerMaterial, color, detail, images, modelImage } = this.props;
     const { onOpenEditorModal, onOpenImageModal, onChangeState, onChangeImgText } = this.props;
     return(
       <div className="detail-fixedbar-wrapper">
