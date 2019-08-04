@@ -22,6 +22,10 @@ const orderSchema = new Schema({
   images: {
     type: [ String ]
   },
+  modelImage: {
+    type: String,
+    default: null,
+  },
   // 공정완료시각
   // 라스트
   lastComplete: {
@@ -93,7 +97,8 @@ function validateOrder(order) {
     material: Joi.string(),
     innerMaterial: Joi.string(),
     color: Joi.string(),
-    detail: Joi.string()
+    detail: Joi.string(),
+    modelImage: Joi.string(),
   }
   return Joi.validate(order, schema);
 }

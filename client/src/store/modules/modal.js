@@ -15,6 +15,11 @@ const INIT_IMAGE = 'modal/INIT_IMAGE';
 const CHANGE_IMAGE_URL = 'modal/CHANGE_IMAGE_URL';
 const DELETE_IMAGE_URL = 'modal/DELETE_IMAGE_URL'
 const INIT_IMAGE_URL = 'modal/INIT_IMAGE_URL';
+const CHANGE_MODEL_IMG ='modal/CHANGE_MODEL_IMG';
+const CHANGE_MODEL_IMG_URL = 'modal/CHANGE_MODEL_IMG_URL';
+const DELETE_MODEL_IMG = 'modal/DELETE_MODEL_IMG';
+const DELETE_MODEL_IMG_URL = 'modal/DELETE_MODEL_IMG_URL';
+const INIT_MODEL_IMG_URL = 'modal/INIT_MODEL_IMG_URL';
 
 export const show = createAction(SHOW);
 export const hide = createAction(HIDE);
@@ -29,32 +34,48 @@ export const initImage = createAction(INIT_IMAGE);
 export const changeImageURL = createAction(CHANGE_IMAGE_URL);
 export const deleteImageURL = createAction(DELETE_IMAGE_URL);
 export const initImageURL = createAction(INIT_IMAGE_URL);
+export const changeModelImg = createAction(CHANGE_MODEL_IMG);
+export const changeModelImgURL = createAction(CHANGE_MODEL_IMG_URL);
+export const deleteModelImg = createAction(DELETE_MODEL_IMG);
+export const deleteModelImgURL = createAction(DELETE_MODEL_IMG_URL);
+export const initModelImgURL = createAction(INIT_MODEL_IMG_URL);
 
 const initialState = Map({
-  // visible = image, editor, company
+  // visible = image, editor, company, model
   visible: false,
+  // only use at editor and model (modify, create)
+  mode: '',
   // add list
   addMode: false,
-  addContent: '',
+  addContent: null,
   modalContents: Map({}),
+  preModalContents: Map({}),
   images: List([]),
-  imageURLs: List([])
+  imageURLs: List([]),
+  modelImage: null,
+  preModelImage: null,
+  modelImageURL: null,
 });
 
 export default handleActions({
   [SHOW]: (state, action) => {
     return state.set('visible', action.payload.visible)
+                .set('mode', action.payload.mode)
                 .set('modalContents', Map(action.payload.modalContents))
-                // formData 초기화
+                .set('preModalContents', Map(action.payload.preModalContents))
+                .set('modelImage', action.payload.modelImage)
+                .set('preModelImage', action.payload.modelImage)
+                .set('modelImageURL', action.payload.modelImage)
   },
   [HIDE]: (state, action) => {
     return state.set('visible', false)
+                .set('mode', '')
                 // 초기화
                 .set('modalContents', Map({}))
   },
   [CHANGE]: (state, action) => {
     const { name, value, kind } = action.payload;
-    return state.setIn(['modalContents', 'contents', kind, name, 'value'], value)
+    return state.setIn(['modalContents', kind, name, 'value'], value)
   },
   [CHANGE_ADD_MODE]: (state, action) => {
     return state.set('addMode', action.payload)
@@ -63,14 +84,14 @@ export default handleActions({
     return state.set('addContent', action.payload.value)
   },
   [ADD_LIST]: (state, action) => {
-    let contents = List(state.getIn(['modalContents', 'contents', 'template']))
-    return state.setIn(['modalContents', 'contents', 'template'], contents.push({"label": action.payload, "value": null}).toJS())
-                .set('addContent', '')
+    let contents = List(state.getIn(['modalContents', 'template']))
+    return state.setIn(['modalContents', 'template'], contents.push({"label": action.payload, "value": null}).toJS())
+                .set('addContent', null)
   },
   [DELETE_LIST]: (state, action) => {
     const { id, kind } = action.payload;
-    let contents = List(state.getIn(['modalContents', 'contents', kind]))
-    return state.setIn(['modalContents', 'contents', kind], contents.delete(id).toJS())
+    let contents = List(state.getIn(['modalContents', kind]))
+    return state.setIn(['modalContents', kind], contents.delete(id).toJS())
   },
   [CHANGE_IMAGE]: (state, action) => {
     const images = state.get('images')
@@ -93,5 +114,20 @@ export default handleActions({
   },
   [INIT_IMAGE_URL]: (state, action) => {
     return state.set('imageURLs', List([]))
+  },
+  [CHANGE_MODEL_IMG]: (state, action) => {
+    return state.set('modelImage', action.payload)
+  },
+  [CHANGE_MODEL_IMG_URL]: (state, action) => {
+    return state.set('modelImageURL', action.payload)
+  },
+  [DELETE_MODEL_IMG]: (state, action) => {
+    return state.set('modelImage', null)
+  },
+  [DELETE_MODEL_IMG_URL]: (state, action) => {
+    return state.set('modelImageURL', null)
+  },
+  [INIT_MODEL_IMG_URL]: (state, action) => {
+    return state.set('modelImageURL', null)
   }
 }, initialState)

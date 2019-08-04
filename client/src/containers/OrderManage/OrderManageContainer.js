@@ -5,7 +5,6 @@ import { OrderManageWrapper } from '../../components/OrderManage/OrderManageWrap
 import { OrderManageState } from '../../components/OrderManage/OrderManageState';
 import { OrderManageList } from '../../components/OrderManage/OrderManageList';
 import { OrderManageDetail } from '../../components/OrderManage/OrderManageDetail';
-import { DetailInput } from '../../components/OrderManage/DetailInput';
 import * as orderActions from '../../store/modules/order';
 import * as customerActions from '../../store/modules/customer';
 import * as modalActions from '../../store/modules/modal';
@@ -19,7 +18,6 @@ class OrderManageContainer extends Component {
     if(this.props.loggedInfo !== nextProps.loggedInfo){
       const { CustomerActions } = this.props;
       CustomerActions.getCustomerInfoByMakerId(nextProps.loggedInfo.get('_id')) 
-      // CustomerActions.getAllCustomerInfo();
     }
   }
 
@@ -69,10 +67,13 @@ class OrderManageContainer extends Component {
   handleOpenEditorModal = () => {
     const { orderById } = this.props;
     const { ModalActions } = this.props;
-
     ModalActions.show({
       visible: "editor",
-      modalContents: orderById
+      mode: "modify",
+      modalContents: orderById.get('contents'),
+      preModalContents: orderById.get('contents'),
+      // 등록되어있는 modelImage를 모달 modelImage와 imageURL(미리보기)로 넘긴다.
+      modelImage: orderById.get('modelImage')
     })
   }
 
@@ -108,7 +109,6 @@ class OrderManageContainer extends Component {
   render() {
     const { view, detailView, imgTextView, allCustomers, customerById, orderById, review } = this.props;
     const { handleViewChange, handleImgTextViewChange, handleGetById, handlePostOrder, handleChangeState, handleOpenEditorModal, handleOpenImageModal, handlePatchProcessingNext, handlePatchProcessingPre } = this;
-
     return(
       <OrderManageWrapper>
         <OrderManageState
@@ -146,6 +146,7 @@ class OrderManageContainer extends Component {
           detail={orderById.toJS().detail}
           images={orderById.toJS().images}
           imgTextView={imgTextView}
+          modelImage={orderById.toJS().modelImage}
           detailView={detailView}
           lastComplete={orderById.toJS().lastComplete && formatDate(orderById.toJS().lastComplete)}
           cutComplete={orderById.toJS().cutComplete && formatDate(orderById.toJS().cutComplete)}
